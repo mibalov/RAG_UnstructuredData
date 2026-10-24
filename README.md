@@ -87,11 +87,15 @@ Then the LLM will produce an anwer using the binary data (images or other unstru
 Documentation Elastic --> https://www.elastic.co/blog/getting-started-with-the-elastic-stack-and-docker-compose
 
 1.	Installation process
-    - create docker : docker build --pull --rm --build-arg user_app=app -f "Dockerfile" -t demo-ai-rag:latest "."
-    - create compose : docker compose -f "docker/docker-compose.yml" up --build
-    - create .env file. example [here](docs/env.md) and place in the keys folder
-    - copy your Goocle cloude service account .json file to keys folder
-    - create user for streamlit and place config.yaml in keys folder
+    - copy `docker/.env.example` to `docker/.env` and set strong passwords
+    - create `keys/.env` using the example [here](docs/env.md)
+    - copy your Google Cloud service account `.json` file to the local `keys` folder
+    - create the Streamlit user configuration as `keys/config.yaml`
+    - build the Docker image: `docker build --pull --rm --build-arg user_app=app -f Dockerfile -t demo-ai-rag:latest .`
+    - start the stack: `docker compose -f docker/docker-compose.yml up -d`
+
+   Keep the local `keys` folder and `docker/.env` out of Git. Docker Compose mounts
+   `keys` at runtime; credentials are excluded from the image build context.
 2.	Software dependencies
     - python 3.11
     - requiremrents file [here](requirements.txt)
@@ -102,53 +106,25 @@ Documentation Elastic --> https://www.elastic.co/blog/getting-started-with-the-e
 
 ![alt text](images/project.png)
 
-# How to create Users and Passwords to this app
+# How to create users and passwords for this app
 
-create a yaml file with name config.yaml in the keys folder
-here you have and example with 2 users user1 and nvidiademo
+Create `keys/config.yaml` locally. Do not commit it; the `keys/` directory is ignored.
+Use your own usernames, email addresses, bcrypt password hashes, and a random cookie
+secret. Do not deploy the placeholders below.
 ```
 credentials:
   usernames:
-    user1:
-      email: test@gmail.com
-      name: user1 
-      password: $2b$12$ZoeMqMyYQZqFGM7iF2bugeYG3E1kL7RA8jLkTvPcpdIlpIz46Yz/i # To be replaced with hashed password
-    nvidiademo:
-      email: demo@nvidia.com
-      name: nvidiademo
-      password: $2b$12$vL2J2PauSXISet6wZIM0j.DFZdq7cyrJ/2TQEn8UT.NyxZuKGfEZa # To be replaced with hashed password
+    your_username:
+      email: you@example.com
+      name: Your Name
+      password: REPLACE_WITH_BCRYPT_HASH
 cookie:
   expiry_days: 0
-  key: laPalma50 # Must be string
-  name: thecokkei
-  ```
+  key: REPLACE_WITH_A_RANDOM_COOKIE_SECRET
+  name: rag_app
+```
 
 
-  ###### To generate the hashes
-  - Go to the folder hasher and edit the file ex.yaml
-  - Fill email , name and password with your values
-  - Run hasher.py
-  - Replace the password in config.yaml with its hash value
-
-  ```
-  credentials:
-  usernames:
-    user1:
-      email: test@gmail.com
-      name: user1 
-      password:  text#me
-    nvidiademo:
-      email: demo@nvidia.com
-      name: nvidiademo
-      password:  laPalma50 
-cookie:
-  expiry_days: 0
-  key: laPalma50 # Must be string
-  name: thecokkei
-  ```
-
-  OUTPUT
-
-  ```
-  {'usernames': {'user1': {'email': 'test@gmail.com', 'name': 'user1', 'password': '$2b$12$ZoeMqMyYQZqFGM7iF2bugeYG3E1kL7RA8jLkTvPcpdIlpIz46Yz/i'}, 'nvidiademo': {'email': 'demo@nvidia.com', 'name': 'nvidiademo', 'password': '$2b$12$vL2J2PauSXISet6wZIM0j.DFZdq7cyrJ/2TQEn8UT.NyxZuKGfEZa'}}}
-  ```
+To generate password hashes, edit `hasher/ex.yaml` with your own values, run
+`hasher/hasher.py`, and copy the generated hash into `keys/config.yaml`. The example
+file contains placeholders only; never reuse its placeholder password or cookie secret.

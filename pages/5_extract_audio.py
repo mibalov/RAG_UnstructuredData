@@ -8,12 +8,10 @@ from dotenv import dotenv_values
 import json
 from src.files import create_folders
 import logging
-from src.utils import print_stack
 from src.helpers import init_session_5, reset_session_5
 from src.work_gemini import init_model
 from IPython import embed
 from vertexai.generative_models import Part
-import base64
 
 # where I am
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -129,10 +127,17 @@ def main(
                         and st.session_state["salir_5"] == False
                     ):
 
-                        audio1 = base64.b64encode(binary_data).decode("utf8")
+                        mime_type = {
+                            ".flac": "audio/flac",
+                            ".m4a": "audio/mp4",
+                            ".mp3": "audio/mpeg",
+                            ".wav": "audio/wav",
+                        }.get(Path(st.session_state["file_name5"]).suffix.lower())
+                        if mime_type is None:
+                            raise ValueError("Unsupported audio file format.")
                         audio = Part.from_data(
-                            mime_type="audio/wav",
-                            data=audio1,
+                            mime_type=mime_type,
+                            data=binary_data,
                         )
 
                         contents = [audio, input_prompt]
@@ -158,14 +163,9 @@ def main(
             ):
                 _ = st.text_area("Status selection", key="upload_state5", height=500)
 
-    except:
-
-        # get the sys stack and log to gcloud
-        st.session_state["salir_5"] = True
-        placeholder.empty()
-        text = print_stack()
-        text = "Extract Audio Page " + text
-        logging.error(text)
+    except Exception as exc:
+        logging.exception("Extract Audio Page failed")
+        st.error(f"No se pudo procesar el audio: {exc}")
     return
 
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
                 os.path.join(
                     path.parent.absolute(),
                     "keys",
-                    "complete-tube-421007-208a4862c992.json",
+                    "rag-multimodal-511022-cef189f29c40.json",
                 )
             ) as source:
                 info = json.load(source)

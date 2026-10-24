@@ -5,7 +5,7 @@ ARG user_app
 
 ENV USER_APP=$user_app
 ENV FAISS_ENABLE_GPU=ON
-# Install necessary packages
+# Install necessary packages... Para hacer manteniemiento y debugging del contenedor
 RUN apt-get update && apt-get -y upgrade \
     && apt-get install -y libsm6 libxext6 git net-tools  python3-magic nano iputils-ping procps \
     && pip install --upgrade pip 
@@ -26,10 +26,10 @@ COPY ./requirements.txt /home/${USER_APP}/gemini/requirements.txt
 RUN pip install -r /home/${USER_APP}/gemini/requirements.txt
 
 COPY . .
-
+# damos permisos de escritura a la carpeta home del usuario para que pueda escribir en ella
 RUN chown -R ${USER_APP}:${USER_APP} /home/${USER_APP}/gemini 
 RUN chmod -R 776 /home/${USER_APP}
-
+#exponemos el puerto 8501 para streamlit
 EXPOSE 8501
 USER ${USER_APP}
 

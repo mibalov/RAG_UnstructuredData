@@ -1,14 +1,14 @@
 credentials:
   usernames:
     user1:
-      email: test@test.com
-      name: user1 
-      password:  text#me
+      email: you@example.com
+      name: example_user
+      password: CHANGE_ME_BEFORE_RUNNING
     nvidiademo:
-      email: demo@test.com
-      name: nvidiademo
-      password:  laPalma50 
+      email: demo@example.com
+      name: example_demo
+      password: CHANGE_ME_BEFORE_RUNNING
 cookie:
   expiry_days: 0
-  key: Nodeed # Must be string
+  key: REPLACE_WITH_A_RANDOM_COOKIE_SECRET
   name: thecokkei

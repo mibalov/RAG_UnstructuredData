@@ -6,7 +6,7 @@ REGION=Region Google cloud  name
 GEMINI-API-KEY=gemini-apy-key
 MODEL=gemini-1.5-flash-002
 EMBEDDINGS=models/text-embedding-004
-EMBEDDINGS2=models/embedding-001
+EMBEDDINGS2=models/gemini-embedding-001
 INDEX_NAME=companies
 INDEX_NAME_FILE=companies.pkl
 FOLDER_PATH=faiss
@@ -20,7 +20,10 @@ NVIDIA_EMBEDDINGS=NV-Embed-QA
 NVIDIA_MODEL=microsoft/phi-3-small-128k-instruct
 TEXT_SPLITTER_MODEL=intfloat/e5-large-v2
 REBUILD_INDEX_7=1
-MULTIVECTOR_EMBEDDINGS=textembedding-gecko@latest
 MULTIVECTOR_COLLECTION_NAME=mm_rag
 MULTIVECTOR_RETRIEVER_KEY=doc_id
 ```
+
+Speak PDF and Speak PDF Multi use `EMBEDDINGS2` with `GEMINI-API-KEY` through the
+Gemini Developer API. These embeddings do not require Application Default
+Credentials.

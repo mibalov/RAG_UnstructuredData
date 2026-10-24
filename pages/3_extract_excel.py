@@ -232,7 +232,7 @@ if __name__ == "__main__":
                 os.path.join(
                     path.parent.absolute(),
                     "keys",
-                    "complete-tube-421007-208a4862c992.json",
+                    "rag-multimodal-511022-cef189f29c40.json",
                 )
             ) as source:
                 info = json.load(source)
@@ -250,7 +250,7 @@ if __name__ == "__main__":
             # Initialize Model
             if "chat3" not in st.session_state:
                 st.session_state["chat3"] = init_llm(
-                    model=config.get("MODEL"), credentials=vertex_credentials
+                    model=config.get("MODEL"), google_api_key=google_api_key
                 )
             logging.info(f"Model {config.get('MODEL')} initialized")
             main(

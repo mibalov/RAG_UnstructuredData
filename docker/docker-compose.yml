@@ -83,6 +83,11 @@ services:
     hostname: demo-ai-rag      
     ports:
       - 8501:8501
+    depends_on:
+      es01:
+        condition: service_healthy
+    volumes:
+      - ../keys:/home/app/gemini/keys:ro
     environment:
       - USER_APP=app
     restart: always
@@ -130,7 +135,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+          "curl --fail --silent http://localhost:9200/ > /dev/null",
         ]
       interval: 10s
       timeout: 10s

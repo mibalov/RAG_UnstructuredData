@@ -275,7 +275,7 @@ if __name__ == "__main__":
                 os.path.join(
                     path_root_dir.parent.absolute(),
                     "keys",
-                    "complete-tube-421007-208a4862c992.json",
+                    "rag-multimodal-511022-cef189f29c40.json",
                 )
             ) as source:
                 info = json.load(source)

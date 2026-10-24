@@ -8,30 +8,28 @@ import os
 import platform
 from langchain_milvus import Milvus
 from langchain_chroma import Chroma
-from langchain_google_vertexai import VertexAIEmbeddings
-from langchain.retrievers.multi_vector import MultiVectorRetriever
-from langchain.storage import InMemoryStore
+from langchain_core.embeddings import Embeddings
+from langchain_classic.retrievers.multi_vector import MultiVectorRetriever
+from langchain_classic.storage import InMemoryStore
+#from langgraph.store.memory import InMemoryStore
 from langchain_core.documents import Document
 import uuid
 
 
 def create_multi_vectorstore(
-    collection_name: str, embeddings_model: str, credentials: str
+    collection_name: str, embeddings: Embeddings
 ):
     """
     Create a multi vector store.
     Args:
         collection_name (str): The name of the collection.
-        embeddings_model (str): The name of the embeddings model.
-        credentials (str): The credentials for the embeddings model.
+        embeddings (Embeddings): The embedding model used by the vector store.
     Returns:
         _type_: Chroma   The created Chroma object.
     """
     return Chroma(
         collection_name=collection_name,
-        embedding_function=VertexAIEmbeddings(
-            model_name=embeddings_model, credentials=credentials
-        ),
+        embedding_function=embeddings,
     )
 
 

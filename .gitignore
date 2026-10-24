@@ -28,3 +28,39 @@ docker/ollama/
 logs/
 faiss/.milvus_example.db.lock
 faiss/milvus_example.db
+
+# Entorno virtual
+.venv/
+venv/
+ENV/
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Configuración local de Docker
+docker/.env
+
+# Credenciales y certificados
+*.pem
+*.key
+*service-account*.json
+*service_account*.json
+*credentials*.json
+.streamlit/secrets.toml
+
+# Caché de Python (mejorado)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+
+# Configuración de VS Code y SO
+.vscode/
+.DS_Store
+Thumbs.db

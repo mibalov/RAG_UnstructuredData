@@ -1,0 +1,27 @@
+.git/
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+
+# Keep local credentials out of the image; Compose mounts keys/ at runtime.
+keys/
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+*service-account*.json
+*service_account*.json
+*credentials*.json
+.streamlit/secrets.toml
+
+# Runtime and generated data
+answers/
+logs/
+tmp/
+out/
+faiss/
+chroma_db/
+kb/

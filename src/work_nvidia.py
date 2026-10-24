@@ -1,8 +1,8 @@
 # test run and see that you can genreate a respond successfully
 from langchain_nvidia_ai_endpoints import ChatNVIDIA, NVIDIAEmbeddings
 import os
-from langchain.docstore.document import Document
-from langchain.text_splitter import SentenceTransformersTokenTextSplitter
+from langchain_classic.docstore.document import Document
+from langchain_classic.text_splitter import SentenceTransformersTokenTextSplitter
 import logging
 
 TEXT_SPLITTER_CHUNCK_SIZE = 200

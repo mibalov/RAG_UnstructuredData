@@ -317,7 +317,7 @@ if __name__ == "__main__":
                 os.path.join(
                     path.parent.absolute(),
                     "keys",
-                    "complete-tube-421007-208a4862c992.json",
+                    "rag-multimodal-511022-cef189f29c40.json",
                 )
             ) as source:
                 info = json.load(source)
@@ -337,14 +337,13 @@ if __name__ == "__main__":
             # Initialize Model
             if "chat8" not in st.session_state:
                 st.session_state["chat8"] = init_llm(
-                    model=config.get("MODEL"), credentials=vertex_credentials
+                    model=config.get("MODEL"), google_api_key=google_api_key
                 )
             # Initialize embeddings models
             logging.info(f"Model {config.get('MODEL')} initialized")
 
             if "embeddings8" not in st.session_state:
                 st.session_state["embeddings8"] = init_embeddings(
-                    credentials=vertex_credentials,
                     google_api_key=config["GEMINI-API-KEY"],
                     model=config["EMBEDDINGS2"],
                 )
@@ -357,14 +356,15 @@ if __name__ == "__main__":
                 st.session_state["db_local_file8"] = ""
 
             if config["VECTOR_STORE_MULTI"] == "chroma":
-                # path to save the faiss index
+                collection_name = config.get("MULTIVECTOR_COLLECTION_NAME")
+                if not collection_name:
+                    raise ValueError("MULTIVECTOR_COLLECTION_NAME must be configured.")
                 st.session_state["vector_store8"] = create_multi_vectorstore(
-                    collection_name=config.get("MULTIVECTOR_COLLECTION_NAME"),
-                    embeddings_model=config.get("MULTIVECTOR_EMBEDDINGS"),
-                    credentials=vertex_credentials,
+                    collection_name=collection_name,
+                    embeddings=st.session_state["embeddings8"],
                 )
             logging.info(
-                f"Vector store: {config.get('VECTOR_STORE_MULTI')} initialized. Embeddings: {config.get('MULTIVECTOR_EMBEDDINGS')}"
+                f"Vector store: {config.get('VECTOR_STORE_MULTI')} initialized. Embeddings: {config.get('EMBEDDINGS2')}"
             )
             if "retriever8" not in st.session_state:
                 st.session_state["retriever8"] = create_multivector_retriever(

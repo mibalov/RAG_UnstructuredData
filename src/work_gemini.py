@@ -2,7 +2,7 @@ from vertexai.generative_models import GenerativeModel, Part, ChatSession, Safet
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 import base64
 import logging
-from langchain.agents.agent_types import AgentType
+from langchain_classic.agents.agent_types import AgentType
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 import os
 from langchain_google_vertexai import VertexAI, ChatVertexAI
@@ -22,7 +22,7 @@ def create_pandas_agent(llm, df):
     open LLM and  create_pandas_dataframe_agent
     Args:
         llm : Model
-        df : Dataframe
+        df : Dataframemklfy67u
     return
 
     """
@@ -119,27 +119,33 @@ def init_model(config):
     )
 
 
-def init_llm(model, credentials):
+def init_llm(model, google_api_key):
     """Create ChatGoogleGenerativeAI Instance
 
     Args:
         model (string): Model
-        credentials (vertex credential service account ): Google credentials
+        google_api_key (string): Gemini Developer API key
 
     Returns:
         _type_: _description_
     """
-    return ChatGoogleGenerativeAI(model=model, credentials=credentials)
+    return ChatGoogleGenerativeAI(
+        model=model,
+        google_api_key=google_api_key,
+        vertexai=False,
+        request_timeout=60,
+        max_retries=1,
+    )
 
 
-def init_embeddings(credentials, google_api_key, model: str = "models/embedding-001"):
+def init_embeddings(google_api_key, model: str = "models/embedding-001"):
     """
     Init EMbeddings Generative Model
     """
     return GoogleGenerativeAIEmbeddings(
         model=model,
-        credentials=credentials,
         google_api_key=google_api_key,
+        vertexai=False,
     )
 
 

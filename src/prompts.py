@@ -1,10 +1,10 @@
 # To help construct our Chat Messages
-from langchain.prompts import (
+from langchain_classic.prompts import (
     PromptTemplate,
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
 )
-from langchain.output_parsers import PydanticOutputParser
+from langchain_classic.output_parsers import PydanticOutputParser
 from langchain_core.messages import AIMessage
 
 # To parse outputs and get structured data back

@@ -1,7 +1,7 @@
 streamlit==1.39.0
 #google-cloud-aiplatform
 pandas
-numpy
+numpy<2.0
 python-dotenv
 streamlit-js-eval
 st-pages
@@ -11,6 +11,7 @@ ipython
 scikit-learn
 langchain-pinecone
 langchain 
+langchain-classic
 langchain-community
 langchain-experimental 
 xmltodict
@@ -43,3 +44,5 @@ langchain_milvus
 langchain-google-vertexai
 rapidocr-onnxruntime
 pymupdf4llm
+
+nats-py

@@ -1,26 +1,27 @@
-import streamlit as st
+import json
+import logging
 import os.path
-from streamlit_pdf_viewer import pdf_viewer
-from streamlit import session_state as ss
+import platform
 from pathlib import Path
-from google.oauth2 import service_account
+
+import streamlit as st
 import vertexai
 from dotenv import dotenv_values
-import json
+from google.oauth2 import service_account
+from IPython import embed
+from langchain_classic.chains import ConversationalRetrievalChain
+from streamlit import session_state as ss
+from streamlit_pdf_viewer import pdf_viewer
+
 from src.files import create_folders, open_table_pdfs
-import logging
-import platform
-from src.utils import print_stack
-from src.pdf_utils import count_pdf_pages
 from src.helpers import init_session_1, reset_session_1
-from src.work_gemini import init_embeddings, init_llm
+from src.pdf_utils import count_pdf_pages
 from src.vector import (
+    add_documents_vector_store,
     create_db_store_from_file,
     create_elasticsearch_store,
-    add_documents_vector_store,
 )
-from IPython import embed
-from langchain.chains import ConversationalRetrievalChain
+from src.work_gemini import init_embeddings, init_llm
 
 # where I am
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -83,7 +84,6 @@ def main(
             init_session_1(st, ss, col1, col2)
 
         with row1_1:
-
             # Access the uploaded ref via a key.
             if st.session_state.value1 >= 0 and st.session_state["salir_1"] == False:
                 uploaded_files = st.file_uploader(
@@ -148,7 +148,6 @@ def main(
                         not (st.session_state["file_history1"] in onlyfiles)
                         or st.session_state["vector_store1"] == None
                     ):
-
                         db = add_documents_vector_store(
                             config=config,
                             session=st,
@@ -199,12 +198,13 @@ def main(
                             return_source_documents=True,
                         )
 
-                        result = chain.invoke(
-                            {
-                                "question": input_prompt,
-                                "chat_history": st.session_state["chat_history1"],
-                            }
-                        )
+                        with st.spinner("Gemini está consultando el documento..."):
+                            result = chain.invoke(
+                                {
+                                    "question": input_prompt,
+                                    "chat_history": st.session_state["chat_history1"],
+                                }
+                            )
                         st.session_state["upload_state1"] = result["answer"]
                         # add History
                         st.session_state["chat_history1"].append(
@@ -215,21 +215,16 @@ def main(
                 logging.info("Salir and writing history")
 
             with st.expander(
-                "���️ Instruccion to send to Model 👇👇",
+                "Instruccion to send to Model 👇👇",
                 expanded=st.session_state["expander_1"],
             ):
                 _ = st.text_area(
                     "Status selection", "", key="upload_state1", height=500
                 )
 
-    except:
-
-        # get the sys stack and log to gcloud
-        st.session_state["salir_1"] = True
-        placeholder.empty()
-        text = print_stack()
-        text = "Speak with PDF Page " + text
-        logging.error(text)
+    except Exception as exc:
+        logging.exception("Speak with PDF Page failed")
+        st.error(f"No se pudo procesar el PDF: {exc}")
     return
 
 
@@ -259,7 +254,7 @@ if __name__ == "__main__":
                 os.path.join(
                     path.parent.absolute(),
                     "keys",
-                    "complete-tube-421007-208a4862c992.json",
+                    "rag-multimodal-511022-cef189f29c40.json",
                 )
             ) as source:
                 info = json.load(source)
@@ -277,16 +272,14 @@ if __name__ == "__main__":
                 credentials=vertex_credentials,
             )
             # Initialize Model
-            if "chat1" not in st.session_state:
-                st.session_state["chat1"] = init_llm(
-                    model=config.get("MODEL"), credentials=vertex_credentials
-                )
+            st.session_state["chat1"] = init_llm(
+                model=config.get("MODEL"), google_api_key=google_api_key
+            )
             # Initialize embeddings models
             logging.info(f"Model {config.get('MODEL')} initialized")
 
             if "embeddings1" not in st.session_state:
                 st.session_state["embeddings1"] = init_embeddings(
-                    credentials=vertex_credentials,
                     google_api_key=config["GEMINI-API-KEY"],
                     model=config["EMBEDDINGS2"],
                 )
@@ -308,7 +301,7 @@ if __name__ == "__main__":
                 )
 
                 if os.path.isfile(st.session_state["db_local_file1"]):
-
+                    #Si ya tengo un vector store creado, lo cargo
                     db_load = create_db_store_from_file(
                         embeddings=st.session_state["embeddings1"],
                         index_name=config["INDEX_NAME"],
